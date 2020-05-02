@@ -1,0 +1,30 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <groupId>osa.ora</groupId>
+  <artifactId>datagrid</artifactId>
+  <version>0.0.1-SNAPSHOT</version>
+<properties>
+  <version.infinispan>10.1.5.Final-redhat-00001</version.infinispan>
+  <maven.compiler.source>1.8</maven.compiler.source>
+  <maven.compiler.target>1.8</maven.compiler.target>
+</properties>
+
+<dependencyManagement>
+  <dependencies>
+    <dependency>
+      <groupId>org.infinispan</groupId>
+      <artifactId>infinispan-bom</artifactId>
+      <version>${version.infinispan}</version>
+      <type>pom</type>
+      <scope>import</scope>
+    </dependency>
+  </dependencies>
+</dependencyManagement>
+<dependencies>
+	<dependency>
+	  <groupId>org.infinispan</groupId>
+	  <artifactId>infinispan-client-hotrod</artifactId>
+	</dependency>
+</dependencies>
+</project>
+
