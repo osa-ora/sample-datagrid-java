@@ -4,6 +4,7 @@ import java.io.FileReader;
 import java.io.Reader;
 import java.util.Properties;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.TimeUnit;
 
 import org.infinispan.client.hotrod.MetadataValue;
 import org.infinispan.client.hotrod.RemoteCache;
@@ -80,15 +81,19 @@ public class CacheService {
 	 * Add/remove some objects from the cache
 	 */
 	public void manipulateSomeCache() {
+		int timeToLive=1000;
 		//add and remove some cache elements
 		for(int i=0;i<50;i++) {
 			String key="key"+i;
+			String key2="mysecondkey"+i;
 			Account account=new Account(i,"Osama Oransa","223234",1);
 			Payment payment=new Payment(i,"1300 USD","Cairo, Egypt");
 			accountsCache.put(key, account);
-			accountsCache.replace(key, account);
+			accountsCache.put(key2, account,timeToLive, TimeUnit.MILLISECONDS);
+			accountsCache.put(key, account);
 			//paymentCache.putIfAbsent(key, payment);
 			CompletableFuture<?> future=paymentCache.putAsync(key, payment);
+			paymentCache.put(key2, payment,timeToLive, TimeUnit.MILLISECONDS);
 			String value = (String) accountsCache.get(key).getName();
 			System.out.println("value:" + value);
 			value = (String) accountsCache.get(key).getName();
@@ -114,27 +119,24 @@ public class CacheService {
 			try {
 				//if sleep more than the expired configuration
 				//object will be removed from the cache as expired
-				Thread.sleep(1100);
+				Thread.sleep(timeToLive);
 			} catch (InterruptedException e) {
 				e.printStackTrace();
 			}
 			//check if cache item didn't expire yet
-			if(accountsCache.containsKey(key)) {
-	    		System.out.println("*** Will delete non-expired account with key=" + key);
-				accountsCache.remove(key);
-		    	if(paymentCache.containsKey(key)) {
-		    		System.out.println("*** Will remove the related payment " + key);
+			if(accountsCache.containsKey(key2)) {
+	    		System.out.println("*** Will delete non-expired account with key=" + key2);
+				accountsCache.remove(key2);
+		    	if(paymentCache.containsKey(key2)) {
+		    		System.out.println("*** Will remove the related payment " + key2);
 		    		paymentCache.remove(key);
+		    	}else {
+		    		System.out.println("***Related payment already expired: " + key2);
 		    	}
-				System.out.println("Check for key:" + accountsCache.containsKey(key));
+				System.out.println("Check for key:" + accountsCache.containsKey(key2));
 			}else {
-				System.out.println("*** Expired item with key=" + key);
+				System.out.println("*** Expired item with key=" + key2);
 			}				
-			try {
-				Thread.sleep(50);
-			} catch (InterruptedException e) {
-				e.printStackTrace();
-			}
 		}
 	}
 	/**
