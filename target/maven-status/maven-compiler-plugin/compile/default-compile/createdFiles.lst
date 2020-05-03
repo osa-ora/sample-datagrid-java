@@ -1,1 +1,5 @@
 osa\ora\datagrid\TestDG.class
+osa\ora\datagrid\beans\Account.class
+osa\ora\datagrid\CacheService$SampleCacheListenerClass.class
+osa\ora\datagrid\CacheService.class
+osa\ora\datagrid\beans\Payment.class
